@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -11,21 +12,23 @@ import (
 	"time"
 
 	"github.com/jirugutema/rbac_service/config"
-	"github.com/jirugutema/rbac_service/server"
+	"github.com/jirugutema/rbac_service/internal/server"
 )
 
 func main() {
-	cfg := config.Load()
+	cfg := *config.LoadConfig()
 	ctx := context.Background()
+	dbURL := config.ConstructDBConnectionString(cfg)
+	rURL := config.ConstructRedisConnectionString(cfg)
 
-	db, err := config.NewPostgres(ctx, cfg.DatabaseURL)
+	db, err := config.NewPostgres(ctx, dbURL)
 	if err != nil {
 		slog.Error("postgres unavailable", "error", err)
 		os.Exit(1)
 	}
 	defer db.Close()
 
-	rdb, err := config.NewRedis(ctx, cfg.RedisAddr)
+	rdb, err := config.NewRedis(ctx, rURL)
 	if err != nil {
 		slog.Error("redis unavailable", "error", err)
 		os.Exit(1)
@@ -36,6 +39,7 @@ func main() {
 
 	go func() {
 		slog.Info("server listening", "addr", srv.Addr)
+		slog.Info("docs", "url", fmt.Sprintf("%s/%s", cfg.Port, "docs"))
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			slog.Error("server failed", "error", err)
 			os.Exit(1)

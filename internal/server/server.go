@@ -10,7 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/jirugutema/rbac_service/config"
-	"github.com/jirugutema/rbac_service/handler"
+	"github.com/jirugutema/rbac_service/internal/handler"
 )
 
 func New(cfg config.Config, db *pgxpool.Pool, rdb *redis.Client) *http.Server {
@@ -32,4 +32,4 @@ func New(cfg config.Config, db *pgxpool.Pool, rdb *redis.Client) *http.Server {
 
 type redisPinger struct{ c *redis.Client }
 
-func (p redisPinger) Ping(ctx context.Context) error { return p.c.Ping(ctx).Err() }
+func (r redisPinger) Ping(ctx context.Context) error { return r.c.Ping(ctx).Err() }
