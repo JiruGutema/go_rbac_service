@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS tenants (
     deleted_at TIMESTAMPTZ
 );
 
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL,
     name TEXT NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE roles (
         UNIQUE (tenant_id, name)
 );
 
-CREATE TABLE permissions (
+CREATE TABLE IF NOT EXISTS permissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL,
     resource TEXT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE permissions (
         UNIQUE (tenant_id, resource, action)
 );
 
-CREATE TABLE role_inheritance (
+CREATE TABLE IF NOT EXISTS role_inheritance (
     tenant_id UUID NOT NULL,
     role_id UUID NOT NULL,
     inherits_from_role_id UUID NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE role_inheritance (
     CHECK (role_id <> inherits_from_role_id)
 );
 
-CREATE TABLE role_permissions (
+CREATE TABLE IF NOT EXISTS role_permissions (
     tenant_id UUID NOT NULL,
     role_id UUID NOT NULL,
     permission_id UUID NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE role_permissions (
         ON DELETE CASCADE
 );
 
-CREATE TABLE subject_roles (
+CREATE TABLE IF NOT EXISTS subject_roles (
     tenant_id UUID NOT NULL,
     subject_id UUID NOT NULL,
     role_id UUID NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE subject_roles (
         ON DELETE CASCADE
 );
 
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL,
     subject_id UUID NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE audit_logs (
         ON DELETE CASCADE
 );
 
-CREATE TABLE outbox (
+CREATE TABLE IF NOT EXISTS outbox (
     id BIGSERIAL PRIMARY KEY,
     event_type TEXT NOT NULL,
     payload JSONB NOT NULL,
