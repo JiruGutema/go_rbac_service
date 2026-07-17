@@ -11,16 +11,20 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/jirugutema/rbac_service/cmd/app/docs"
 	"github.com/jirugutema/rbac_service/config"
 	"github.com/jirugutema/rbac_service/internal/server"
 )
 
+// @title       RBAC Service API
+// @version     1.0
+// @description Role-Based Access Control (RBAC) service API.
+// @BasePath    /
 func main() {
 	cfg := *config.LoadConfig()
 	ctx := context.Background()
 	dbURL := config.ConstructDBConnectionString(cfg)
 	rURL := config.ConstructRedisConnectionString(cfg)
-
 	db, err := config.NewPostgres(ctx, dbURL)
 	if err != nil {
 		slog.Error("postgres unavailable", "error", err)
@@ -39,7 +43,7 @@ func main() {
 
 	go func() {
 		slog.Info("server listening", "addr", srv.Addr)
-		slog.Info("docs", "url", fmt.Sprintf("%s/%s", cfg.Port, "docs"))
+		slog.Info("swagger", "url", fmt.Sprintf("http://localhost:%s/swagger/index.html", cfg.Port))
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			slog.Error("server failed", "error", err)
 			os.Exit(1)

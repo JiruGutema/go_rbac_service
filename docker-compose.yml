@@ -8,7 +8,7 @@ services:
     environment:
       PORT: "8080"
       DATABASE_URL: postgres://rbac:rbac@postgres:5432/rbac?sslmode=disable
-      REDIS_ADDR: redis:6379
+      REDIS_URL: redis:6379
     volumes:
       - .:/app
       - go-mod-cache:/go/pkg/mod
@@ -38,7 +38,11 @@ services:
     image: redis:7-alpine
     ports:
       - "6380:6379"
-
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 2s
+      retries: 5
 volumes:
   pg-data:
   go-mod-cache:

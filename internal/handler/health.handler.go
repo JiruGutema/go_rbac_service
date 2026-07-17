@@ -2,9 +2,10 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Pinger interface {
@@ -19,11 +20,11 @@ func NewHealth(deps map[string]Pinger) *Health {
 	return &Health{deps: deps}
 }
 
-func (h *Health) Check(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+func (h *Health) Check(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 2*time.Second)
 	defer cancel()
 
-	status := map[string]string{"status": "ok"}
+	status := gin.H{"status": "ok"}
 	code := http.StatusOK
 
 	for name, dep := range h.deps {
@@ -36,7 +37,5 @@ func (h *Health) Check(w http.ResponseWriter, r *http.Request) {
 		status[name] = "up"
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(status)
+	c.JSON(code, status)
 }

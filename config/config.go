@@ -16,7 +16,6 @@ type Config struct {
 	Domain      string
 	DBUser      string
 	DBPassword  string
-	GoEnv       string
 	DBName      string
 	RedisHost   string
 	RedisPort   string
@@ -28,10 +27,9 @@ func LoadConfig() *Config {
 	return &Config{
 		Port:        getEnv("PORT", ""),
 		Domain:      getEnv("DOMAIN", ""),
-		GinMode:     getEnv("GIN_MODE ", ""),
+		GinMode:     getEnv("GIN_MODE", ""),
 		DBHost:      getEnv("DB_HOST", ""),
 		DBPort:      getEnv("DB_PORT", ""),
-		GoEnv:       getEnv("GO_ENV", ""),
 		DBUser:      getEnv("DB_USER", ""),
 		DBPassword:  getEnv("DB_PASSWORD", ""),
 		DBName:      getEnv("DB_NAME", ""),

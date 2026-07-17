@@ -1,0 +1,63 @@
+basePath: /
+definitions:
+  github_com_jirugutema_rbac_service_internal_dto.RoleResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      is_disabled:
+        type: boolean
+      name:
+        type: string
+      tenant_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Role-Based Access Control (RBAC) service API.
+  title: RBAC Service API
+  version: "1.0"
+paths:
+  /roles/{id}:
+    get:
+      description: Returns a single role identified by its UUID.
+      parameters:
+      - description: Role ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_jirugutema_rbac_service_internal_dto.RoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a role by ID
+      tags:
+      - roles
+swagger: "2.0"
